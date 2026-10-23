@@ -134,14 +134,27 @@
 #wrapper .formatted th { color: var(--graphite); font-weight: 400; text-align: left; border-bottom: 3px solid var(--ink); }
 #wrapper .formatted td { border-bottom: 1px solid var(--silk); padding: .35em 1.2em .35em 0; }
 #wrapper .formatted a { color: var(--signal); }
+/* ссылки J1 — шелкография на плате: чёрная моноширинная надпись без подчёркивания;
+   под курсором — цвет студии и черта, как дорожка под током */
+#wrapper .formatted .custom-pinout a {
+  color: var(--ink); text-decoration: none; letter-spacing: .08em;
+  text-shadow: 0 0 2px var(--paper), 0 0 5px var(--paper);
+  transition: color .15s ease;
+}
+#wrapper .formatted .custom-pinout a:hover { color: var(--signal); text-decoration: underline; text-underline-offset: 4px; }
 
 /* ---------- порядок: сразу после баннера — игры, ссылки — в самом конце ----------
    У itch игры и текст профиля — соседние колонки (.columns): ставим их столбиком,
    колонку игр — первой. Подпись над платой рисует CSS. */
 #wrapper .profile_content .columns { display: flex; flex-direction: column; }
 #wrapper .profile_content .game_column { order: -1; width: auto; }
-#wrapper .profile_content .profile_column { width: auto; }
-#wrapper .profile_content > .user_links { display: none; }   /* те же X и Bluesky — уже в J1 */
+#wrapper .profile_content .profile_column { width: 100%; max-width: none; float: none; }
+#wrapper .profile_content .user_links { display: none; }   /* те же X и Bluesky — уже в J1 */
+/* Сетку игр itch не показываем: микросхемы — из текста профиля (.custom-chips). Причина:
+   неопубликованная EXECUTION (лежит невпаянной) должна стоять на одной плате рядом с
+   опубликованной CHROME ORCHID, а сетка itch показывает только опубликованные игры и живёт
+   в другой колонке. Чип опубликованной игры в тексте профиля — ссылка на её страницу. */
+#wrapper .profile_content .game_column { display: none; }
 #wrapper .game_column::before,
 #wrapper .user_profile:has(> .custom-chips)::before,
 #wrapper .formatted h2 {
@@ -271,6 +284,12 @@
   font-size: 60px; line-height: .98; letter-spacing: .04em;
   margin-left: -.06em; width: calc(100% + .2em); white-space: pre-line;
 }
+/* название — ссылка на страницу игры, нажимается весь корпус */
+#wrapper .formatted .custom-chip:not(.custom-loose) h3 { position: static; }
+#wrapper .formatted .custom-chip h3 a {
+  color: inherit; -webkit-text-fill-color: inherit; text-decoration: none;
+}
+#wrapper .formatted .custom-chip h3 a::after { content: ""; position: absolute; inset: 0; z-index: 2; }
 /* у неё номер — строкой над названием */
 #wrapper .formatted .custom-chip:not(.custom-loose) h3::before {
   position: static; display: block; margin: 0 0 8px .06em;
