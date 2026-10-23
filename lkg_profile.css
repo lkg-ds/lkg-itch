@@ -256,6 +256,17 @@
 #wrapper .game_grid_widget .game_cell:hover .game_title a,
 #wrapper .formatted .custom-chip:hover h3 { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255,255,255,.25)); }
 
+/* невпаянная микросхема (EXECUTION): посадочное место на плате пустое — оно впечатано в
+   подложку вместе с шелкографией U2/DNP, — а корпус без пайки лежит рядом, сдвинут и
+   повёрнут, одним краем на ногах (chip_loose.webp). Маркировка выгравирована, но питания
+   нет: тускло и без отклика на наведение */
+#wrapper .custom-chip.custom-loose { transform: translate(18px, 26px) rotate(-6deg); }
+#wrapper .custom-chip.custom-loose::before { background-image: url(chip_loose.webp); }
+#wrapper .custom-chip.custom-loose::after { content: none; }
+#wrapper .formatted .custom-chip.custom-loose h3 { opacity: .5; }
+#wrapper .formatted .custom-chip.custom-loose p { opacity: .55; }
+#wrapper .formatted .custom-chip.custom-loose:hover h3 { filter: drop-shadow(0 0 3px #050505); }
+
 /* узкий экран: одна микросхема в ряд, разводка обрезана — видны корпус и ноги */
 @media (max-width: 700px) {
   #wrapper .game_grid_widget,
