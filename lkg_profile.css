@@ -121,10 +121,6 @@
   color: transparent; font-size: 0; border: 0; border-radius: 0; padding: 0;
 }
 #wrapper .custom-pinout p:first-child code { background-image: url(j1_sq.webp); }
-#wrapper .custom-pinout::before {
-  content: "J1  LINKS  2.54MM"; display: block; column-span: all;
-  font-size: 13px; letter-spacing: .12em; color: var(--graphite); margin-bottom: .4em;
-}
 
 /* таблица ревизий */
 #wrapper .formatted table { border-collapse: collapse; width: 100%; font-family: var(--mono); text-transform: uppercase; }
@@ -140,7 +136,8 @@
 #wrapper .profile_content .profile_column { width: auto; }
 #wrapper .profile_content > .user_links { display: none; }   /* те же X и Bluesky — уже в J1 */
 #wrapper .game_column::before,
-#wrapper .user_profile:has(> .custom-chips)::before {
+#wrapper .user_profile:has(> .custom-chips)::before,
+#wrapper .formatted h2 {
   content: "LKG.DS // BOARD REV A // 2 OPERATORS // TITLES MOUNTED";
   display: block;
   font-family: var(--mono); font-size: 15px; letter-spacing: .1em;
@@ -149,6 +146,7 @@
   border-bottom: 3px solid var(--ink);
   padding: 22px 0 8px;
 }
+#wrapper .formatted h2 { font-weight: 400; text-transform: uppercase; margin: 0 0 .7em; }
 
 /* ---------- игры — микросхемы, впаянные в плату ----------
    Корпус, ноги на площадках, разводка к отверстиям, выводы, запаянные вручную (у каждой
@@ -235,12 +233,6 @@
 #wrapper .game_grid_widget .game_platform,
 #wrapper .formatted .custom-chip p:nth-of-type(2) { display: inline-block; color: #b9bcc1; font-size: 12px; letter-spacing: .1em; margin: 9px 1.2ch 0 0; }
 #wrapper .game_grid_widget .game_platform .icon { color: #b9bcc1; }
-/* код даты (год+неделя) — как на настоящих корпусах */
-#wrapper .game_grid_widget .game_platform::after,
-#wrapper .formatted .custom-chip p:nth-of-type(2)::after {
-  content: "  2643  REV " counter(custom-chip, upper-alpha);
-  letter-spacing: .1em;
-}
 /* позиционное обозначение над шелкографией посадочного места */
 #wrapper .game_grid_widget .game_cell_data::after,
 #wrapper .custom-chip::after {
