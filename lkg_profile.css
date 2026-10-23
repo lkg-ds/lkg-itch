@@ -41,39 +41,34 @@
 }
 /* ---------- плата под страницей ----------
    Та же плата генератора, что на баннере, в той же «ксерокопии» (page_board.py): один кусок
-   2560 px на всю ширину, по вертикали — зеркальная плитка 3976. Слои привязаны к блоку
-   с играми (.columns), а не к баннеру: высота баннера на itch своя, а подложка под
-   микросхемами (board_patch) обязана совпасть с фоном в пиксель. Слой начинается на 400 px
-   выше блока (там низ баннера); строка 615 плитки = строка 0 подложки = начало сетки игр,
-   которое ровно на 53 px ниже начала блока (подпись над платой), отсюда −162 px. */
-#wrapper .profile_content .columns { position: relative; }
+   2560 px на всю ширину, по вертикали — зеркальная плитка 3976. Слой привязан к блоку
+   микросхем — сетке игр itch (.game_grid_widget) или, пока игры не опубликованы, к
+   заглушкам из текста профиля (.custom-chips): подложка под микросхемами (board_patch) лежит
+   в начале этого блока и обязана совпасть с фоном в пиксель, а высота баннера и всего, что
+   над блоком, на itch своя. Слой начинается на 1400 px выше блока и уходит на 3000 px ниже;
+   строка 615 плитки = строка 0 подложки = верх блока, отсюда 1400 - 615 = 785 px. */
 /* низ баннера (он сам растворяется в бумагу) — прозрачный: под ним та же плата, и баннер
    переходит в неё без белой полосы. Сам баннер не меняется — только маска */
 #wrapper .profile_banner {
   -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
   mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
 }
-#wrapper .game_column::after {
+/* сама плата: выше блока — бумага (её закрывает баннер), под его прозрачным низом плата
+   проступает плавно, под колонкой текста бумага остаётся полупрозрачной вуалью */
+#wrapper .game_grid_widget::after,
+#wrapper .custom-chips::after {
   content: "";
-  position: absolute; top: -400px; bottom: -700px; left: 50%;
+  position: absolute; top: -1400px; bottom: -3000px; left: 50%;
   width: 2560px; margin-left: -1280px;
-  pointer-events: none;
-  background-repeat: repeat-y;
-  background-position: center -162px;
-  background-size: var(--tile);
-}
-/* сама плата: из низа баннера проступает плавно (мягкое начало — крупа видна даже при
-   8 %), под колонкой текста бумага остаётся, но полупрозрачной вуалью */
-#wrapper .game_column::after {
-  z-index: -2;
+  z-index: -2; pointer-events: none;
   background-image:
-    linear-gradient(180deg, var(--paper) 0 240px, rgba(241,240,236,.8) 330px, rgba(241,240,236,.5) 400px,
-                    rgba(241,240,236,.24) 500px, var(--paper0) 620px),
+    linear-gradient(180deg, var(--paper) 0 840px, rgba(241,240,236,.8) 980px, rgba(241,240,236,.5) 1070px,
+                    rgba(241,240,236,.25) 1170px, var(--paper0) 1280px),
     linear-gradient(90deg, var(--paper0) 640px, rgba(241,240,236,.68) 810px,
                     rgba(241,240,236,.68) 1750px, var(--paper0) 1920px),
     url(board_full.jpg);
   background-repeat: no-repeat, no-repeat, repeat-y;
-  background-position: 0 0, 0 0, center -162px;
+  background-position: 0 0, 0 0, center 785px;
   background-size: 100% 100%, 100% 100%, var(--tile);
 }
 #wrapper .user_page { position: relative; z-index: 1; }
@@ -143,11 +138,13 @@
 #wrapper .profile_content .columns { display: flex; flex-direction: column; }
 #wrapper .profile_content .game_column { order: -1; width: auto; }
 #wrapper .profile_content .profile_column { width: auto; }
-#wrapper .game_column::before {
+#wrapper .profile_content > .user_links { display: none; }   /* те же X и Bluesky — уже в J1 */
+#wrapper .game_column::before,
+#wrapper .user_profile:has(> .custom-chips)::before {
   content: "LKG.DS // BOARD REV A // 2 OPERATORS // TITLES MOUNTED";
   display: block;
   font-family: var(--mono); font-size: 15px; letter-spacing: .1em;
-  line-height: 20px; margin: 0;               /* ровно 53 px: на этом стоит совпадение подложки с фоном */
+  line-height: 20px; margin: 0;
   color: var(--graphite);
   border-bottom: 3px solid var(--ink);
   padding: 22px 0 8px;
@@ -160,64 +157,60 @@
    Под ними — кусок той же платы с расчищенными посадочными местами (board_patch.webp).
    Спрайт 475×460: корпус 285×380 в точке (95, 40). Ячейка itch — ровно корпус: обложка —
    гравировка по корпусу в (14, 20), 257×204, маркировка — текст itch под ней. */
-#wrapper .game_grid_widget {
+#wrapper .game_grid_widget,
+#wrapper .custom-chips {
   counter-reset: custom-chip;
-  position: relative; z-index: 0;
+  position: relative;          /* без z-index: подложка и плата уходят под весь текст страницы */
   display: grid;
   grid-template-columns: repeat(auto-fill, 285px);
   justify-content: space-between;
   gap: 130px 190px;
   padding: 84px 100px 70px;
 }
-/* подложка: плата генератора под чипами и вокруг, шире колонки — сходится с полями */
-#wrapper .game_grid_widget::before {
+/* подложка: плата генератора под чипами и вокруг, шире колонки — сходится с фоном */
+#wrapper .game_grid_widget::before,
+#wrapper .custom-chips::before {
   content: "";
   position: absolute; top: 0; left: 50%; transform: translateX(-50%);
   width: min(1280px, 100vw); height: 560px;
   background: url(board_patch.webp) center top / 1280px 560px no-repeat;
   z-index: -1; pointer-events: none;
 }
-#wrapper .game_grid_widget .game_cell {
+#wrapper .game_grid_widget .game_cell,
+#wrapper .custom-chip {
   counter-increment: custom-chip;
   position: relative; z-index: 0;
   width: 285px; height: 380px; box-sizing: border-box;
   margin: 0; padding: 20px 14px 0;
   color: var(--etch);
   background: none; border: 0; box-shadow: none; outline: 0;
+  font-family: var(--mono); text-transform: uppercase;
+  /* тёмный ореол гасит крупу эпоксида вокруг букв — мелкая маркировка читается */
+  text-shadow: 0 0 2px #050505, 0 0 4px #050505, 0 0 7px rgba(5,5,5,.85);
 }
-#wrapper .game_grid_widget .game_cell::before {
+#wrapper .game_grid_widget .game_cell::before,
+#wrapper .custom-chip::before {
   content: "";
   position: absolute; left: -95px; top: -40px; width: 475px; height: 460px;
   background: url(chip_1.webp) 0 0 / 475px 460px no-repeat;
   z-index: -1; pointer-events: none;
 }
-#wrapper .game_grid_widget .game_cell:nth-child(2n)::before { background-image: url(chip_2.webp); }
+#wrapper .game_grid_widget .game_cell:nth-child(2n)::before,
+#wrapper .custom-chip:nth-child(2n)::before { background-image: url(chip_2.webp); }
 
 /* вместо обложки — название игры, выгравированное лазером по эпоксиду крупно шрифтом
    студии (растр строк лазера — градиентом по буквам); картинку обложки не показываем */
 #wrapper .game_grid_widget .game_thumb { display: none; }
-
-/* маркировка — лазером по чёрному корпусу, светлая */
-#wrapper .game_grid_widget .game_cell_data {
-  position: static; padding-top: 0;
-  font-family: var(--mono); text-transform: uppercase;
-  /* тёмный ореол гасит крупу эпоксида вокруг букв — мелкая маркировка читается */
-  text-shadow: 0 0 2px #050505, 0 0 4px #050505, 0 0 7px rgba(5,5,5,.85);
-}
-#wrapper .game_grid_widget .game_title {
+#wrapper .game_grid_widget .game_cell_data { position: static; padding-top: 0; }
+#wrapper .game_grid_widget .game_title,
+#wrapper .formatted .custom-chip h3 {
   position: relative;
   display: flex; align-items: center; justify-content: center;
-  height: 216px; text-align: center;
-  font-family: var(--stroke); font-size: 34px; line-height: 1.08; letter-spacing: .04em;
+  height: 216px; margin: 0; padding: 0; border: 0; text-align: center;
+  font-family: var(--stroke); font-weight: 400; font-size: 34px; line-height: 1.08; letter-spacing: .04em;
 }
-/* номер детали — мелко, под названием */
-#wrapper .game_grid_widget .game_title::before {
-  content: "LKG  LKG-00" counter(custom-chip) "-PS2";
-  position: absolute; left: 0; bottom: 0;
-  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; line-height: 1;
-  color: #b9bcc1;
-}
-#wrapper .game_grid_widget .game_title a {
+#wrapper .game_grid_widget .game_title a,
+#wrapper .formatted .custom-chip h3 {
   text-decoration: none;
   color: #e4e6e9;
   background: repeating-linear-gradient(180deg, #eef0f2 0 2px, #9da0a5 2px 3px);
@@ -227,18 +220,30 @@
   filter: drop-shadow(0 0 3px #050505);
   transition: filter .3s ease;
 }
-#wrapper .game_grid_widget .game_text { color: #d2d4d8; font-size: 12.5px; letter-spacing: .05em; line-height: 1.35; margin-top: 7px; }
+/* номер детали — мелко, под названием */
+#wrapper .game_grid_widget .game_title::before,
+#wrapper .formatted .custom-chip h3::before {
+  content: "LKG  LKG-00" counter(custom-chip) "-PS2";
+  position: absolute; left: 0; bottom: 0;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; line-height: 1;
+  color: #b9bcc1; -webkit-text-fill-color: #b9bcc1; background: none;
+}
+#wrapper .game_grid_widget .game_text,
+#wrapper .formatted .custom-chip p:nth-of-type(1) { color: #d2d4d8; font-size: 12.5px; letter-spacing: .05em; line-height: 1.35; margin: 7px 0 0; }
 #wrapper .game_grid_widget .game_author { display: none; }
 #wrapper .game_grid_widget .game_genre,
-#wrapper .game_grid_widget .game_platform { display: inline-block; color: #b9bcc1; font-size: 12px; letter-spacing: .1em; margin-top: 9px; margin-right: 1.2ch; }
+#wrapper .game_grid_widget .game_platform,
+#wrapper .formatted .custom-chip p:nth-of-type(2) { display: inline-block; color: #b9bcc1; font-size: 12px; letter-spacing: .1em; margin: 9px 1.2ch 0 0; }
 #wrapper .game_grid_widget .game_platform .icon { color: #b9bcc1; }
 /* код даты (год+неделя) — как на настоящих корпусах */
-#wrapper .game_grid_widget .game_platform::after {
+#wrapper .game_grid_widget .game_platform::after,
+#wrapper .formatted .custom-chip p:nth-of-type(2)::after {
   content: "  2643  REV " counter(custom-chip, upper-alpha);
   letter-spacing: .1em;
 }
 /* позиционное обозначение над шелкографией посадочного места */
-#wrapper .game_grid_widget .game_cell_data::after {
+#wrapper .game_grid_widget .game_cell_data::after,
+#wrapper .custom-chip::after {
   content: "U" counter(custom-chip);
   position: absolute; top: -40px; left: -41px;
   font-family: var(--mono); font-size: 14px; letter-spacing: .1em;
@@ -249,15 +254,19 @@
 }
 
 /* наведение — гравировка вспыхивает ярче. Впаянная деталь не «прыгает» — без смещения. */
-#wrapper .game_grid_widget .game_cell:hover .game_title a { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255,255,255,.25)); }
+#wrapper .game_grid_widget .game_cell:hover .game_title a,
+#wrapper .formatted .custom-chip:hover h3 { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255,255,255,.25)); }
 
 /* узкий экран: одна микросхема в ряд, разводка обрезана — видны корпус и ноги */
 @media (max-width: 700px) {
-  #wrapper .game_grid_widget { grid-template-columns: 285px; justify-content: center; gap: 110px 0; padding: 64px 0; }
-  #wrapper .game_grid_widget::before { display: none; }
-  #wrapper .game_grid_widget .game_cell::before { left: -30px; width: 345px; background-position: -65px 0; }
+  #wrapper .game_grid_widget,
+  #wrapper .custom-chips { grid-template-columns: 285px; justify-content: center; gap: 110px 0; padding: 64px 0; }
+  #wrapper .game_grid_widget::before,
+  #wrapper .custom-chips::before { display: none; }
+  #wrapper .game_grid_widget .game_cell::before,
+  #wrapper .custom-chip::before { left: -30px; width: 345px; background-position: -65px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
-  #wrapper .game_grid_widget .game_cell { transition: none; }
+  #wrapper .game_grid_widget .game_title a, #wrapper .formatted .custom-chip h3 { transition: none; }
   #wrapper .custom-cursor::after { animation: none; }
 }
