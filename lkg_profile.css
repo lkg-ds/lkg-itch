@@ -55,11 +55,13 @@
   display: block; width: 100%; max-width: none;   /* иначе itch сохраняет пропорции и сужает баннер */
   height: auto; max-height: 600px;
   object-fit: cover; object-position: 50% 0;
-  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
-  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 72%, transparent 100%);
 }
-/* сама плата: выше блока — бумага (её закрывает баннер), под его прозрачным низом плата
-   проступает плавно, под колонкой текста бумага остаётся полупрозрачной вуалью */
+/* сама плата: под баннером её нет совсем — баннер сам растворяется в бумагу (иначе его
+   низ ложится поверх платы и детали двоятся); плата проступает ниже, у подписи над
+   микросхемами (верх блока − 90 px … +60 px); под колонкой текста бумага остаётся
+   полупрозрачной вуалью */
 #wrapper .game_grid_widget::after,
 #wrapper .custom-chips::after {
   content: "";
@@ -67,8 +69,8 @@
   width: 2560px; margin-left: -1280px;
   z-index: -2; pointer-events: none;
   background-image:
-    linear-gradient(180deg, var(--paper) 0 840px, rgba(241,240,236,.8) 980px, rgba(241,240,236,.5) 1070px,
-                    rgba(241,240,236,.25) 1170px, var(--paper0) 1280px),
+    linear-gradient(180deg, var(--paper) 0 1310px, rgba(241,240,236,.55) 1350px, rgba(241,240,236,.2) 1400px,
+                    var(--paper0) 1460px),
     linear-gradient(90deg, var(--paper0) 640px, rgba(241,240,236,.68) 810px,
                     rgba(241,240,236,.68) 1750px, var(--paper0) 1920px),
     url(board_full.jpg);
