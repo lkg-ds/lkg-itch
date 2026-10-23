@@ -285,11 +285,16 @@
   margin-left: -.06em; width: calc(100% + .2em); white-space: pre-line;
 }
 /* название — ссылка на страницу игры, нажимается весь корпус */
-#wrapper .formatted .custom-chip:not(.custom-loose) h3 { position: static; }
 #wrapper .formatted .custom-chip h3 a {
   color: inherit; -webkit-text-fill-color: inherit; text-decoration: none;
 }
-#wrapper .formatted .custom-chip h3 a::after { content: ""; position: absolute; inset: 0; z-index: 2; }
+/* фильтр кромки делает название контейнером для абсолютных потомков, поэтому область
+   ссылки задана от названия ровно в размер корпуса (285×380, название — в 20 px от верха и
+   сдвинуто на −0.06em), а название поднято над кадром и текстом */
+#wrapper .formatted .custom-chip:not(.custom-loose) h3 { position: relative; z-index: 2; }
+#wrapper .formatted .custom-chip h3 a::after {
+  content: ""; position: absolute; top: -20px; left: calc(.06em - 14px); width: 285px; height: 380px;
+}
 /* у неё номер — строкой над названием */
 #wrapper .formatted .custom-chip:not(.custom-loose) h3::before {
   position: static; display: block; margin: 0 0 8px .06em;
