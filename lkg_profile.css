@@ -1,0 +1,263 @@
+/* LAST KNOWN GOOD.DS — Custom CSS главной страницы студии (lkgds.itch.io).
+   Edit theme → Custom CSS. Всё внутри #wrapper, свои классы — с префиксом custom-.
+   Стиль «Last Known Good Configuration»: страница — продолжение платы с баннера. Из-под
+   баннера по обе стороны колонки вниз идёт та же плата генератора в той же «ксерокопии»,
+   на ней мигают её светодиоды. Игры — микросхемы, ПРИПАЯННЫЕ
+   к плате: от каждой ножки дорожка уходит к переходному отверстию. Разделы текста — зоны
+   платы со своими светодиодами (LINK горит у распиновки), ссылки — штыревой разъём J1.
+   Собирается скриптом build_profile.py в host/: этот CSS, шрифты и плата лежат на внешнем
+   хостинге, а в поле Custom CSS у itch (лимит профиля — 5120 символов) идёт одна строка
+   @import из itch_field.css. Пути в url() — относительно этого файла. */
+
+@font-face {
+  font-family: "LKG Stroke";
+  src: url(fonts/lkg_stroke.ttf) format("truetype");
+  font-display: swap;
+}
+@font-face {
+  font-family: "LKG Mono";
+  src: url(fonts/vcr_osd_mono_cyr.ttf) format("truetype");
+  font-display: swap;
+}
+
+#wrapper {
+  --paper: #f1f0ec;          /* ровно цвет низа баннера: фон его продолжает */
+  --ink: #141414;
+  --graphite: #77766f;
+  --silk: #232323;           /* шелкография — чёрная краска, как на белых платах */
+  --epoxy: #18191b;          /* корпус микросхемы */
+  --epoxy-hi: #2b2d31;
+  --etch: #8f9298;           /* лазерная маркировка */
+  --tin: #c9ccd0;            /* ножки, луженые */
+  --signal: #a8261c;         /* единственный цвет студии: ссылки, светодиод питания */
+  --stroke: "LKG Stroke", "Chakra Petch", Lato, sans-serif;
+  --mono: "LKG Mono", "Courier New", monospace;
+  --copper: #e2dfd6;         /* медь под белой маской */
+  --tile: 2560px 3976px;
+  --paper0: rgba(241,240,236,0);
+  position: relative;
+  overflow: clip;                 /* плата шире экрана — за край не вылезает и прокрутки не даёт */
+  background-color: var(--paper);
+}
+/* ---------- плата под страницей ----------
+   Та же плата генератора, что на баннере, в той же «ксерокопии» (page_board.py): один кусок
+   2560 px на всю ширину, по вертикали — зеркальная плитка 3976. Слои привязаны к блоку
+   с играми (.columns), а не к баннеру: высота баннера на itch своя, а подложка под
+   микросхемами (board_patch) обязана совпасть с фоном в пиксель. Слой начинается на 400 px
+   выше блока (там низ баннера); строка 615 плитки = строка 0 подложки = начало сетки игр,
+   которое ровно на 53 px ниже начала блока (подпись над платой), отсюда −162 px. */
+#wrapper .profile_content .columns { position: relative; }
+/* низ баннера (он сам растворяется в бумагу) — прозрачный: под ним та же плата, и баннер
+   переходит в неё без белой полосы. Сам баннер не меняется — только маска */
+#wrapper .profile_banner {
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+}
+#wrapper .game_column::after {
+  content: "";
+  position: absolute; top: -400px; bottom: -700px; left: 50%;
+  width: 2560px; margin-left: -1280px;
+  pointer-events: none;
+  background-repeat: repeat-y;
+  background-position: center -162px;
+  background-size: var(--tile);
+}
+/* сама плата: из низа баннера проступает плавно (мягкое начало — крупа видна даже при
+   8 %), под колонкой текста бумага остаётся, но полупрозрачной вуалью */
+#wrapper .game_column::after {
+  z-index: -2;
+  background-image:
+    linear-gradient(180deg, var(--paper) 0 240px, rgba(241,240,236,.8) 330px, rgba(241,240,236,.5) 400px,
+                    rgba(241,240,236,.24) 500px, var(--paper0) 620px),
+    linear-gradient(90deg, var(--paper0) 640px, rgba(241,240,236,.68) 810px,
+                    rgba(241,240,236,.68) 1750px, var(--paper0) 1920px),
+    url(board_full.jpg);
+  background-repeat: no-repeat, no-repeat, repeat-y;
+  background-position: 0 0, 0 0, center -162px;
+  background-size: 100% 100%, 100% 100%, var(--tile);
+}
+#wrapper .user_page { position: relative; z-index: 1; }
+
+/* ---------- заголовки и текст профиля ---------- */
+#wrapper .formatted h1,
+#wrapper .formatted h2,
+#wrapper .formatted h3 {
+  font-family: var(--stroke);
+  font-weight: 400;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: .15em;
+  margin: 1.6em 0 .6em;
+}
+#wrapper .custom-status {
+  font-family: var(--mono);
+  color: var(--graphite);
+  letter-spacing: .08em;
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: .5em;
+  text-transform: uppercase;
+}
+/* лог загрузки: строки с точками-заполнителями, итог прижат вправо */
+#wrapper .custom-log { font-family: var(--mono); text-transform: uppercase; }
+#wrapper .custom-log p {
+  display: flex; gap: 1ch; margin: .25em 0; align-items: baseline;
+}
+#wrapper .custom-log b { color: var(--graphite); font-weight: 400; min-width: 10ch; }
+#wrapper .custom-log span { flex: 1; overflow: hidden; white-space: nowrap; }
+#wrapper .custom-log span::after {
+  content: " ............................................................................";
+  color: var(--silk);
+}
+#wrapper .custom-log i { font-style: normal; }
+#wrapper .custom-cursor::after {
+  content: "_"; animation: custom-blink 1.1s steps(1) infinite;
+}
+@keyframes custom-blink { 50% { opacity: 0; } }
+
+/* распиновка ссылок — разъём J1: у каждой ссылки сквозная площадка 2.54 мм из генератора
+   (у первого вывода квадратная, с меткой шелкографией), дорожка от неё уходит к тексту */
+#wrapper .custom-pinout { font-family: var(--mono); text-transform: uppercase; columns: 2 18em; }
+#wrapper .custom-pinout p { display: flex; align-items: center; margin: .2em 0; break-inside: avoid; }
+#wrapper .custom-pinout code {
+  flex: none; width: 56px; height: 36px; margin-right: 4px;
+  background: url(j1_rd.webp) 0 0 / 56px 36px no-repeat;
+  color: transparent; font-size: 0; border: 0; border-radius: 0; padding: 0;
+}
+#wrapper .custom-pinout p:first-child code { background-image: url(j1_sq.webp); }
+#wrapper .custom-pinout::before {
+  content: "J1  LINKS  2.54MM"; display: block; column-span: all;
+  font-size: 13px; letter-spacing: .12em; color: var(--graphite); margin-bottom: .4em;
+}
+
+/* таблица ревизий */
+#wrapper .formatted table { border-collapse: collapse; width: 100%; font-family: var(--mono); text-transform: uppercase; }
+#wrapper .formatted th { color: var(--graphite); font-weight: 400; text-align: left; border-bottom: 3px solid var(--ink); }
+#wrapper .formatted td { border-bottom: 1px solid var(--silk); padding: .35em 1.2em .35em 0; }
+#wrapper .formatted a { color: var(--signal); }
+
+/* ---------- порядок: сразу после баннера — игры, ссылки — в самом конце ----------
+   У itch игры и текст профиля — соседние колонки (.columns): ставим их столбиком,
+   колонку игр — первой. Подпись над платой рисует CSS. */
+#wrapper .profile_content .columns { display: flex; flex-direction: column; }
+#wrapper .profile_content .game_column { order: -1; width: auto; }
+#wrapper .profile_content .profile_column { width: auto; }
+#wrapper .game_column::before {
+  content: "LKG.DS // BOARD REV A // 2 OPERATORS // TITLES MOUNTED";
+  display: block;
+  font-family: var(--mono); font-size: 15px; letter-spacing: .1em;
+  line-height: 20px; margin: 0;               /* ровно 53 px: на этом стоит совпадение подложки с фоном */
+  color: var(--graphite);
+  border-bottom: 3px solid var(--ink);
+  padding: 22px 0 8px;
+}
+
+/* ---------- игры — микросхемы, впаянные в плату ----------
+   Корпус, ноги на площадках, разводка к отверстиям, выводы, запаянные вручную (у каждой
+   микросхемы своя пайка), ключ и шелкография — спрайт генератора плат (pcb_layout.py,
+   chip_1/chip_2 в itch_specs.py) в той же «ксерокопии», что баннер (page_board.py chip … pos).
+   Под ними — кусок той же платы с расчищенными посадочными местами (board_patch.webp).
+   Спрайт 475×460: корпус 285×380 в точке (95, 40). Ячейка itch — ровно корпус: обложка —
+   гравировка по корпусу в (14, 20), 257×204, маркировка — текст itch под ней. */
+#wrapper .game_grid_widget {
+  counter-reset: custom-chip;
+  position: relative; z-index: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 285px);
+  justify-content: space-between;
+  gap: 130px 190px;
+  padding: 84px 100px 70px;
+}
+/* подложка: плата генератора под чипами и вокруг, шире колонки — сходится с полями */
+#wrapper .game_grid_widget::before {
+  content: "";
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: min(1280px, 100vw); height: 560px;
+  background: url(board_patch.webp) center top / 1280px 560px no-repeat;
+  z-index: -1; pointer-events: none;
+}
+#wrapper .game_grid_widget .game_cell {
+  counter-increment: custom-chip;
+  position: relative; z-index: 0;
+  width: 285px; height: 380px; box-sizing: border-box;
+  margin: 0; padding: 20px 14px 0;
+  color: var(--etch);
+  background: none; border: 0; box-shadow: none; outline: 0;
+}
+#wrapper .game_grid_widget .game_cell::before {
+  content: "";
+  position: absolute; left: -95px; top: -40px; width: 475px; height: 460px;
+  background: url(chip_1.webp) 0 0 / 475px 460px no-repeat;
+  z-index: -1; pointer-events: none;
+}
+#wrapper .game_grid_widget .game_cell:nth-child(2n)::before { background-image: url(chip_2.webp); }
+
+/* вместо обложки — название игры, выгравированное лазером по эпоксиду крупно шрифтом
+   студии (растр строк лазера — градиентом по буквам); картинку обложки не показываем */
+#wrapper .game_grid_widget .game_thumb { display: none; }
+
+/* маркировка — лазером по чёрному корпусу, светлая */
+#wrapper .game_grid_widget .game_cell_data {
+  position: static; padding-top: 0;
+  font-family: var(--mono); text-transform: uppercase;
+  /* тёмный ореол гасит крупу эпоксида вокруг букв — мелкая маркировка читается */
+  text-shadow: 0 0 2px #050505, 0 0 4px #050505, 0 0 7px rgba(5,5,5,.85);
+}
+#wrapper .game_grid_widget .game_title {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  height: 216px; text-align: center;
+  font-family: var(--stroke); font-size: 34px; line-height: 1.08; letter-spacing: .04em;
+}
+/* номер детали — мелко, под названием */
+#wrapper .game_grid_widget .game_title::before {
+  content: "LKG  LKG-00" counter(custom-chip) "-PS2";
+  position: absolute; left: 0; bottom: 0;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .14em; line-height: 1;
+  color: #b9bcc1;
+}
+#wrapper .game_grid_widget .game_title a {
+  text-decoration: none;
+  color: #e4e6e9;
+  background: repeating-linear-gradient(180deg, #eef0f2 0 2px, #9da0a5 2px 3px);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: none;              /* тень маркировки просвечивала бы сквозь прозрачные буквы */
+  filter: drop-shadow(0 0 3px #050505);
+  transition: filter .3s ease;
+}
+#wrapper .game_grid_widget .game_text { color: #d2d4d8; font-size: 12.5px; letter-spacing: .05em; line-height: 1.35; margin-top: 7px; }
+#wrapper .game_grid_widget .game_author { display: none; }
+#wrapper .game_grid_widget .game_genre,
+#wrapper .game_grid_widget .game_platform { display: inline-block; color: #b9bcc1; font-size: 12px; letter-spacing: .1em; margin-top: 9px; margin-right: 1.2ch; }
+#wrapper .game_grid_widget .game_platform .icon { color: #b9bcc1; }
+/* код даты (год+неделя) — как на настоящих корпусах */
+#wrapper .game_grid_widget .game_platform::after {
+  content: "  2643  REV " counter(custom-chip, upper-alpha);
+  letter-spacing: .1em;
+}
+/* позиционное обозначение над шелкографией посадочного места */
+#wrapper .game_grid_widget .game_cell_data::after {
+  content: "U" counter(custom-chip);
+  position: absolute; top: -40px; left: -41px;
+  font-family: var(--mono); font-size: 14px; letter-spacing: .1em;
+  color: var(--ink);
+  padding-left: 4px;
+  /* шелкография поверх платы: белая подложка-«пятно», как у настоящей маркировки */
+  text-shadow: 0 0 2px var(--paper), 0 0 4px var(--paper), 0 0 6px var(--paper);
+}
+
+/* наведение — гравировка вспыхивает ярче. Впаянная деталь не «прыгает» — без смещения. */
+#wrapper .game_grid_widget .game_cell:hover .game_title a { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255,255,255,.25)); }
+
+/* узкий экран: одна микросхема в ряд, разводка обрезана — видны корпус и ноги */
+@media (max-width: 700px) {
+  #wrapper .game_grid_widget { grid-template-columns: 285px; justify-content: center; gap: 110px 0; padding: 64px 0; }
+  #wrapper .game_grid_widget::before { display: none; }
+  #wrapper .game_grid_widget .game_cell::before { left: -30px; width: 345px; background-position: -65px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #wrapper .game_grid_widget .game_cell { transition: none; }
+  #wrapper .custom-cursor::after { animation: none; }
+}
