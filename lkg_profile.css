@@ -248,8 +248,27 @@
 #wrapper .game_grid_widget .game_cell:hover .game_title a,
 #wrapper .formatted .custom-chip:hover h3 { filter: brightness(1.25) drop-shadow(0 0 6px rgba(255,255,255,.25)); }
 
-/* короткие слова (CHROME / ORCHID) — гравировка во всю ширину корпуса */
-#wrapper .formatted .custom-chip:not(.custom-loose) h3 { font-size: 58px; line-height: 1.02; }
+/* впаянная микросхема с вышедшей демкой: название — крупно, в самом верху корпуса; под ним
+   по центру — кадр из игры, тоже выгравирован (одноцветно, растр строк лазера); под
+   питанием (наведение) кадр загорается в цвет; ниже — остальная маркировка */
+#wrapper .formatted .custom-chip:not(.custom-loose) h3 {
+  height: auto; display: block; text-align: left;
+  font-size: 54px; line-height: .98; letter-spacing: .02em;
+}
+#wrapper .formatted .custom-chip:not(.custom-loose) p:nth-of-type(1)::before {
+  content: ""; display: block;
+  height: 125px; margin: 4px 0 10px;
+  background:
+    repeating-linear-gradient(180deg, rgba(0,0,0,.5) 0 1px, transparent 1px 3px),
+    url(shot_chrome_orchid.webp) center / cover no-repeat;
+  filter: grayscale(1) brightness(2.3) contrast(1.25);
+  mix-blend-mode: screen;
+  transition: filter .3s ease;
+}
+#wrapper .formatted .custom-chip:not(.custom-loose):hover p:nth-of-type(1)::before {
+  filter: none; mix-blend-mode: normal;
+}
+#wrapper .formatted .custom-chip:not(.custom-loose) p:nth-of-type(1) { margin-top: 0; font-size: 14px; }
 
 /* невпаянная микросхема (EXECUTION): посадочное место на плате пустое — оно впечатано в
    подложку вместе с шелкографией U2/DNP, — а корпус без пайки лежит рядом, сдвинут и
