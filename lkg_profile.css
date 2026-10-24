@@ -148,7 +148,8 @@
    колонку игр — первой. Подпись над платой рисует CSS. */
 #wrapper .profile_content .columns { display: flex; flex-direction: column; }
 #wrapper .profile_content .game_column { order: -1; width: auto; }
-#wrapper .profile_content .profile_column { width: 100%; max-width: none; float: none; }
+#wrapper .profile_content .profile_column { width: 100%; max-width: none; float: none;
+  position: static; }   /* у itch колонка sticky — это свой слой, и плата под чипами ложилась поверх баннера */
 #wrapper .profile_content .user_links { display: none; }   /* те же X и Bluesky — уже в J1 */
 /* Сетку игр itch не показываем: микросхемы — из текста профиля (.custom-chips). Причина:
    неопубликованная EXECUTION (лежит невпаянной) должна стоять на одной плате рядом с
