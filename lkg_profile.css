@@ -191,8 +191,8 @@
 #wrapper .custom-chips::before {
   content: "";
   position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: min(1280px, 100vw); height: 560px;
-  background: url(board_patch.webp) center top / 1280px 560px no-repeat;
+  width: min(1280px, 100vw); height: 1070px;     /* два ряда: U1 U2 / U3 */
+  background: url(board_patch.webp) center top / 1280px 1070px no-repeat;
   z-index: -1; pointer-events: none;
 }
 #wrapper .game_grid_widget .game_cell,
@@ -219,6 +219,7 @@
 }
 #wrapper .game_grid_widget .game_cell:nth-child(2n)::before,
 #wrapper .custom-chip:nth-child(2n)::before { background-image: url(chip_2.webp); }
+#wrapper .custom-chip:nth-child(3)::before { background-image: url(chip_3.webp); }   /* у каждой своя пайка */
 
 /* вместо обложки — название игры, выгравированное лазером по эпоксиду крупно шрифтом
    студии: матовое светло-серое с порами выжига (зерно), края утоплены; картинку обложки
@@ -327,6 +328,12 @@
   mix-blend-mode: screen;
   transition: filter .3s ease;
 }
+/* у каждой игры свой кадр: класс на чипе в тексте профиля */
+#wrapper .formatted .custom-chip.custom-skin p:nth-of-type(1)::before {
+  background-image:
+    repeating-linear-gradient(180deg, rgba(0,0,0,.35) 0 1px, transparent 1px 3px),
+    url(shot_second_skin.webp);
+}
 #wrapper .formatted .custom-chip:not(.custom-loose):hover p:nth-of-type(1)::before {
   filter: none; mix-blend-mode: normal;
 }
@@ -341,6 +348,9 @@
 #wrapper .custom-chip.custom-loose::after { content: none; }
 #wrapper .formatted .custom-chip.custom-loose h3 { opacity: .5; }
 #wrapper .formatted .custom-chip.custom-loose p { opacity: .55; }
+/* EXECUTION ещё не вышла, но корпус — ссылка на её джемовую версию (SECOND SKIN): область
+   ссылки — весь лежащий корпус (название тут без сдвига −0.06em) */
+#wrapper .formatted .custom-chip.custom-loose h3 a::after { left: -14px; }
 #wrapper .formatted .custom-chip.custom-loose:hover h3 { filter: drop-shadow(0 -1px 0 rgba(0,0,0,.9)) drop-shadow(0 1px 0 rgba(255,255,255,.08)); }
 
 /* узкий экран: одна микросхема в ряд, разводка обрезана — видны корпус и ноги */
